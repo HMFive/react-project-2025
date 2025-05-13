@@ -19,6 +19,7 @@ import "../profileCalendar.scss";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import Modal from "../Modal";
 
 dayjs.extend(utc);
 dayjs.extend(isSameOrBefore);
@@ -80,6 +81,8 @@ const CalendarContainer = ({ schedule, auth }: CalendarContainerProps) => {
   const [initialDate, setInitialDate] = useState<Date>(
     dayjs(schedule?.scheduleStartDate).toDate()
   );
+  const [isDialogOpen,setIsDialogOpen] = useState(false)
+  const [event,setEvent] = useState({staff: "",title: "", startDate: "", endDate: ""})
 
   const getPlugins = () => {
     const plugins = [dayGridPlugin];
@@ -171,8 +174,9 @@ const CalendarContainer = ({ schedule, auth }: CalendarContainerProps) => {
       if (offDays?.includes(transformedDate)) highlightedDates.push(date);
     });
 
+    const filteredWorks = works.filter((s) => s.staffId === selectedStaffId)
     setHighlightedDates(highlightedDates);
-    setEvents(works);
+    setEvents(filteredWorks);
   };
 
   useEffect(() => {
@@ -186,14 +190,38 @@ const CalendarContainer = ({ schedule, auth }: CalendarContainerProps) => {
 
   const RenderEventContent = ({ eventInfo }: any) => {
     return (
-      <div className="event-content">
+      <div className="event-content" onClick={() => {
+        setIsDialogOpen(true)
+        setEvent({
+          staff: getStaffById(eventInfo.event._def.extendedProps.staffId)?.name ?? "",
+          title: eventInfo.event.title,
+          startDate: eventInfo.event._instance.range.start.toLocaleString(),
+          endDate: eventInfo.event._instance.range.end.toLocaleString(),
+        })
+      }}>
         <p>{eventInfo.event.title}</p>
+
       </div>
     );
   };
 
+  const EventModal = () => {
+    return (
+        <Modal
+            openModal={isDialogOpen}
+            closeModal={() => setIsDialogOpen(false)}
+        >
+          <p>Name: {event.staff}</p>
+          <p>Title: {event.title}</p>
+          <p>Start Date: {event.startDate}</p>
+          <p>End Date: {event.endDate}</p>
+        </Modal>
+    )
+  }
+
   return (
     <div className="calendar-section">
+      <EventModal></EventModal>
       <div className="calendar-wrapper">
         <div className="staff-list">
           {schedule?.staffs?.map((staff: any) => (
