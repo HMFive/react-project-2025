@@ -39,6 +39,30 @@ const scheduleReducer: any = {
     loading: false,
     errors: payload,
   }),
+
+  [types.UPDATE_ASSIGNMENT_DATE]: (
+      state: ScheduleState,
+      { payload }: Action<{ id: string; shiftStart: string; shiftEnd: string }>
+  ): ScheduleState => {
+    const updatedAssignments = state.schedule.assignments.map((assignment) => {
+      if (assignment.id === payload.id) {
+        return {
+          ...assignment,
+          shiftStart: payload.shiftStart,
+          shiftEnd: payload.shiftEnd,
+        };
+      }
+      return assignment;
+    });
+
+    return {
+      ...state,
+      schedule: {
+        ...state.schedule,
+        assignments: updatedAssignments,
+      },
+    };
+  },
 };
 
 export default handleActions(scheduleReducer, initialState) as any;

@@ -21,6 +21,8 @@ import utc from "dayjs/plugin/utc";
 import customParseFormat from "dayjs/plugin/customParseFormat"
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import Modal from "../Modal";
+import {updateAssignmentDate} from "../../store/schedule/actions.ts";
+import {useDispatch} from "react-redux";
 
 dayjs.extend(utc);
 dayjs.extend(isSameOrBefore);
@@ -75,6 +77,7 @@ const classes = [
 ];
 
 const CalendarContainer = ({schedule, auth}: CalendarContainerProps) => {
+    const dispatch = useDispatch();
     const calendarRef = useRef<FullCalendar>(null);
 
     const [events, setEvents] = useState<EventInput[]>([]);
@@ -85,7 +88,7 @@ const CalendarContainer = ({schedule, auth}: CalendarContainerProps) => {
     );
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [event, setEvent] = useState({staff: "", title: "", startDate: "", endDate: ""})
-    const [pairedDays, setPairedDays] = useState();
+    const [pairedDays, setPairedDays] = useState<string[][]>();
     const getPlugins = () => {
         const plugins = [dayGridPlugin];
 
@@ -181,7 +184,7 @@ const CalendarContainer = ({schedule, auth}: CalendarContainerProps) => {
             dayjs(p.endDate, "DD.MM.YYYY").format("DD.MM.YYYY")))
 
         const allPairedDays = pairedDaysBetween
-        console.log(allPairedDays);
+
         let highlightedDates: string[] = [];
 
         dates.forEach((date) => {
@@ -278,6 +281,14 @@ const CalendarContainer = ({schedule, auth}: CalendarContainerProps) => {
                     dayMaxEventRows={4}
                     fixedWeekCount={true}
                     showNonCurrentDates={true}
+                    eventDrop={(e) => {
+                        const event = e.event
+                        dispatch(updateAssignmentDate({
+                            id: event.id,
+                            shiftStart: dayjs(event.start).format("YYYY-MM-DDTHH:mm:ss"),
+                            shiftEnd: dayjs(event.end ?? event.start).format("YYYY-MM-DDTHH:mm:ss"),
+                        }) as any);
+                    }}
                     eventContent={(eventInfo: any) => (
                         <RenderEventContent eventInfo={eventInfo}/>
                     )}
