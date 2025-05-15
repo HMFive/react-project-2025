@@ -179,11 +179,10 @@ const CalendarContainer = ({schedule, auth}: CalendarContainerProps) => {
             dayjs(schedule.scheduleEndDate).format("DD.MM.YYYY")
         );
 
-        const pairedDaysBetween = pairedDays?.map((p) =>
+        const allPairedDays = pairedDays?.map((p) =>
             getDatesBetween(dayjs(p.startDate, "DD.MM.YYYY").format("DD.MM.YYYY"),
             dayjs(p.endDate, "DD.MM.YYYY").format("DD.MM.YYYY")))
 
-        const allPairedDays = pairedDaysBetween
 
         let highlightedDates: string[] = [];
 
