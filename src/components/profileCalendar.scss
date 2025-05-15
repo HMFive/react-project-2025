@@ -428,7 +428,22 @@
   }
 }
 
-.highlightedPair {
+.highlightedPair0 {
   content: "";
   border-bottom: 5px solid rgba(194, 6, 138, 0.5) !important;
+}
+
+.highlightedPair1 {
+  content: "";
+  border-bottom: 5px solid rgba(220, 43, 43, 0.7) !important;
+}
+
+.highlightedPair2 {
+  content: "";
+  border-bottom: 5px solid rgba(31, 194, 6, 0.5) !important;
+}
+
+.highlightedPair3 {
+  content: "";
+  border-bottom: 5px solid rgb(22, 33, 139) !important;
 }
